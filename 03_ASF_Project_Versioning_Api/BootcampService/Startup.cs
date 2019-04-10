@@ -71,7 +71,7 @@
                     options.OperationFilter<SwaggerDefaultValues>();
 
                     // integrate xml comments
-                    //options.IncludeXmlComments( XmlCommentsFilePath );
+                    options.IncludeXmlComments( XmlCommentsFilePath );
                 } );
         }
 
