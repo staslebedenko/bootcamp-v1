@@ -1,34 +1,65 @@
 ﻿namespace Microsoft.Examples
 {
-    using System.Fabric;
-
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
+    using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.ApiExplorer;
+    using Microsoft.Azure.KeyVault;
+    using Microsoft.Azure.Services.AppAuthentication;
     using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.Configuration.AzureKeyVault;
+    using  Microsoft.Extensions.Configuration.UserSecrets;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Options;
     using Microsoft.Extensions.PlatformAbstractions;
     using Swashbuckle.AspNetCore.SwaggerGen;
+    using System.Fabric;
     using System.IO;
     using System.Reflection;
-
-    using Microsoft.AspNetCore.Mvc;
-
-    using static Microsoft.AspNetCore.Mvc.CompatibilityVersion;
 
     /// <summary>
     /// Represents the startup process for the application.
     /// </summary>
     public class Startup
     {
+        private IHostingEnvironment environment;
+
+
         /// <summary>
         /// Initializes a new instance of the <see cref="Startup"/> class.
         /// </summary>
-        /// <param name="configuration">The current configuration.</param>
-        public Startup( IConfiguration configuration )
+        /// <param name="environment">The current configuration.</param>
+        public Startup(IHostingEnvironment environment)
         {
-            Configuration = configuration;
+            this.environment = environment;
+
+            var configurationFileName = $"appsettings{(environment.IsProduction() ? string.Empty : "." + environment.EnvironmentName)}.json";
+            
+            var configurationSection = FabricRuntime.GetActivationContext()?
+                .GetConfigurationPackageObject("Config")?
+                .Settings?
+                .Sections["BootcampConfiguration"];
+
+            environment.EnvironmentName = configurationSection?.Parameters["ASPNETCORE_ENVIRONMENT"]?.Value;
+
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile(configurationFileName, false, true)
+                .AddUserSecrets<Startup>(false).AddEnvironmentVariables();
+
+            if (environment.IsProduction() || environment.IsStaging())
+            {
+                var keyVaultEndpoint = configurationSection?.Parameters["KeyVaultEndpoint"]?.Value;
+
+                if (!string.IsNullOrEmpty(keyVaultEndpoint))
+                {
+                    var azureServiceTokenProvider = new AzureServiceTokenProvider();
+                    var keyVaultClient = new KeyVaultClient(new KeyVaultClient.AuthenticationCallback(azureServiceTokenProvider.KeyVaultTokenCallback));
+                    builder.AddAzureKeyVault(keyVaultEndpoint, keyVaultClient, new DefaultKeyVaultSecretManager());
+                }
+            }
+
+            this.Configuration = builder.Build();
         }
 
         /// <summary>
@@ -41,17 +72,17 @@
         /// Configures services for the application.
         /// </summary>
         /// <param name="services">The collection of services to configure the application with.</param>
-        public void ConfigureServices( IServiceCollection services )
+        public void ConfigureServices(IServiceCollection services)
         {
             // the sample application always uses the latest version, but you may want an explicit version such as Version_2_2
             // note: Endpoint Routing is enabled by default; however, if you need legacy style routing via IRouter, change it to false
-            services.AddMvc( options => options.EnableEndpointRouting = true ).SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc(options => options.EnableEndpointRouting = true).SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddApiVersioning(
                 options =>
                 {
                     // reporting api versions will return the headers "api-supported-versions" and "api-deprecated-versions"
                     options.ReportApiVersions = true;
-                } );
+                });
             services.AddVersionedApiExplorer(
                 options =>
                 {
@@ -62,7 +93,7 @@
                     // note: this option is only necessary when versioning by url segment. the SubstitutionFormat
                     // can also be used to control the format of the API version in route templates
                     options.SubstituteApiVersionInUrl = true;
-                } );
+                });
             services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
             services.AddSwaggerGen(
                 options =>
@@ -71,8 +102,8 @@
                     options.OperationFilter<SwaggerDefaultValues>();
 
                     // integrate xml comments
-                    options.IncludeXmlComments( XmlCommentsFilePath );
-                } );
+                    options.IncludeXmlComments(XmlCommentsFilePath);
+                });
         }
 
         /// <summary>
@@ -81,7 +112,7 @@
         /// <param name="app">The current application builder.</param>
         /// <param name="env">The current hosting environment.</param>
         /// <param name="provider">The API version descriptor provider used to enumerate defined API versions.</param>
-        public void Configure( IApplicationBuilder app, IHostingEnvironment env, IApiVersionDescriptionProvider provider )
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApiVersionDescriptionProvider provider)
         {
             //var context = FabricRuntime.GetActivationContext().
 
@@ -103,8 +134,8 @@
             get
             {
                 var basePath = PlatformServices.Default.Application.ApplicationBasePath;
-                var fileName = typeof( Startup ).GetTypeInfo().Assembly.GetName().Name + ".xml";
-                return Path.Combine( basePath, fileName );
+                var fileName = typeof(Startup).GetTypeInfo().Assembly.GetName().Name + ".xml";
+                return Path.Combine(basePath, fileName);
             }
         }
     }

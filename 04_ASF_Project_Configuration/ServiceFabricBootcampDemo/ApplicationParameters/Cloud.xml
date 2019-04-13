@@ -2,5 +2,8 @@
 <Application xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Name="fabric:/ServiceFabricBootcampDemo" xmlns="http://schemas.microsoft.com/2011/01/fabric">
   <Parameters>
     <Parameter Name="BootcampService_InstanceCount" Value="-1" />
+    <Parameter Name="ASPNETCORE_ENVIRONMENT" Value="Production" />
+    <Parameter Name="AppInsightsKey" Value="d4602dc5-2587-436e-bc88-988456ed33c2" />
+    <Parameter Name="KeyVaultEndpoint" Value="https://bootcamp2019demovault.vault.azure.net/" />
   </Parameters>
 </Application>

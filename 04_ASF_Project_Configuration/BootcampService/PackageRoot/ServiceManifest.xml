@@ -18,9 +18,9 @@
         <WorkingFolder>CodePackage</WorkingFolder>
       </ExeHost>
     </EntryPoint>
-    <EnvironmentVariables>
+    <!--<EnvironmentVariables>
       <EnvironmentVariable Name="ASPNETCORE_ENVIRONMENT" Value=""/>
-    </EnvironmentVariables>
+    </EnvironmentVariables>-->
   </CodePackage>
 
   <!-- Config package is the contents of the Config directoy under PackageRoot that contains an 
