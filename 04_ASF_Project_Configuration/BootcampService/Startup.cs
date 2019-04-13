@@ -29,6 +29,7 @@
         /// Initializes a new instance of the <see cref="Startup"/> class.
         /// </summary>
         /// <param name="environment">The current configuration.</param>
+        /// http://bootcamp2019-services-demo.northeurope.cloudapp.azure.com:8427/swagger/index.html 
         public Startup(IHostingEnvironment environment)
         {
             this.environment = environment;
