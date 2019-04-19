@@ -1,5 +1,7 @@
 ﻿namespace Microsoft.Examples
 {
+    using System;
+
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Mvc;
@@ -16,6 +18,12 @@
     using System.Fabric;
     using System.IO;
     using System.Reflection;
+
+    using IdentityServer4.AccessTokenValidation;
+
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.Examples.Helpers;
+    using Microsoft.IdentityModel.Logging;
 
     /// <summary>
     /// Represents the startup process for the application.
@@ -75,6 +83,7 @@
         /// <param name="services">The collection of services to configure the application with.</param>
         public void ConfigureServices(IServiceCollection services)
         {
+
             // the sample application always uses the latest version, but you may want an explicit version such as Version_2_2
             // note: Endpoint Routing is enabled by default; however, if you need legacy style routing via IRouter, change it to false
             services.AddMvc(options => options.EnableEndpointRouting = true).SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
@@ -106,6 +115,50 @@
                     options.IncludeXmlComments(XmlCommentsFilePath);
                 });
             services.AddSingleton<IConfiguration>(Configuration);
+
+            IdentityModelEventSource.ShowPII = true;
+            services.Configure<CookiePolicyOptions>(
+                options =>
+                    {
+                        options.CheckConsentNeeded = context => true;
+                        options.MinimumSameSitePolicy = SameSiteMode.None;
+                        options.Secure = CookieSecurePolicy.Always;
+                    });
+
+            services.AddCors(options =>
+                {
+                    options.AddPolicy("AllowSpecificOrigin",
+                        builder =>
+                            {
+                                builder.WithOrigins("*").AllowAnyHeader().AllowAnyMethod();
+                                builder.WithOrigins("*").AllowAnyHeader().AllowAnyMethod();
+                                builder.WithOrigins("*").AllowAnyHeader().AllowAnyMethod();
+                            });
+
+                });
+
+            var identityProviderConfig = this.Configuration.GetSection("IdentityProviderConfig").Get<IdentityProviderConfig>();
+
+
+            services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
+                .AddIdentityServerAuthentication(options =>
+                    {
+                        options.Authority = identityProviderConfig.Url;
+                        options.ApiName = "resourceApi";
+                        options.RequireHttpsMetadata = true;
+                    });
+
+            services.AddAuthorization(options =>
+                {
+                    options.AddPolicy(
+                        "registeredUser",
+                        policyAdmin =>
+                            {
+                                policyAdmin.RequireClaim("scope", "yourFancyApi");
+                            });
+                });
+
+            services.AddTransient<IAuthorizationHelper, AuthorizationHelper>();
         }
 
         /// <summary>
@@ -116,7 +169,9 @@
         /// <param name="provider">The API version descriptor provider used to enumerate defined API versions.</param>
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApiVersionDescriptionProvider provider)
         {
-            //var context = FabricRuntime.GetActivationContext().
+            app.UseAuthentication();
+            app.UseHttpsRedirection();
+            app.UseCookiePolicy();
 
             app.UseMvc();
             app.UseSwagger();

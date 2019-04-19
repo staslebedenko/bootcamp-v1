@@ -9,6 +9,7 @@ using Microsoft.ServiceFabric.Services.Runtime;
 using System.Collections.Generic;
 using System.Fabric;
 using System.IO;
+using System.Net;
 
 namespace Microsoft.Examples
 {
@@ -35,7 +36,15 @@ namespace Microsoft.Examples
                         ServiceEventSource.Current.ServiceMessage(serviceContext, $"Starting Kestrel on {url}");
 
                         return new WebHostBuilder()
-                                    .UseKestrel()
+                            .UseKestrel(options =>
+                                {
+                                    var port = serviceContext.CodePackageActivationContext.GetEndpoint("ServiceEndpoint").Port;
+                                    options.Listen(IPAddress.IPv6Any, port, listenOptions =>
+                                        {
+                                            listenOptions.UseHttps(CertificateConfiguration.GetCertificate());
+                                            listenOptions.NoDelay = true;
+                                        });
+                                })
                                     .ConfigureServices(
                                         services => services
                                             .AddSingleton<StatelessServiceContext>(serviceContext)

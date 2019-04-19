@@ -1,18 +1,22 @@
 ﻿namespace Microsoft.Examples.V3.Controllers
 {
+    using Microsoft.ApplicationInsights;
+    using Microsoft.ApplicationInsights.Extensibility;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Configuration;
     using Models;
     using System;
     using System.Collections.Generic;
 
-    using Microsoft.ApplicationInsights;
-    using Microsoft.ApplicationInsights.Extensibility;
-    using Microsoft.Extensions.Configuration;
+    //https://localhost/swagger/index.html?urls.primaryName=V3
+    //https://localhost/api/Orders/1?api-version=3.0
 
     /// <summary>
     /// Represents a RESTful service of orders.
     /// </summary>
     [ApiController]
+    [Authorize("registeredUser")]
     [ApiVersion( "3.0" )]
     [Route( "api/[controller]" )]
     public class OrdersController : ControllerBase

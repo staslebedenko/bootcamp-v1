@@ -20,7 +20,7 @@
                                     AzureActiveDirectory="true"
                                     ServerCertThumbprint="0123456789012345678901234567890123456789" />
   -->
-  <ClusterConnectionParameters ConnectionEndpoint="bootcamp2019-services-demo.northeurope.cloudapp.azure.com:19000" X509Credential="true" ServerCertThumbprint="B67FF4041FCF6A2E71C458EAA0E79B1C32D953D2" FindType="FindByThumbprint" FindValue="B67FF4041FCF6A2E71C458EAA0E79B1C32D953D2" StoreLocation="CurrentUser" StoreName="My" />
+  <ClusterConnectionParameters />
   <ApplicationParameterFile Path="..\ApplicationParameters\Cloud.xml" />
   <CopyPackageParameters CompressPackage="true" />
 </PublishProfile>
