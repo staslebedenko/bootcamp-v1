@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <IsServiceFabricServiceProject>True</IsServiceFabricServiceProject>
+    <ServerGarbageCollection>True</ServerGarbageCollection>
+    <RuntimeIdentifier>win7-x64</RuntimeIdentifier>
+    <TargetLatestRuntimePatch>False</TargetLatestRuntimePatch>
+    <RootNamespace>Microsoft.Examples</RootNamespace>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <UserSecretsId>2e1ea454-3747-4351-831e-a86bff66b67e</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.6.1" />
+    <PackageReference Include="Microsoft.ApplicationInsights.ServiceFabric.Native" Version="2.2.2" />
+    <PackageReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="3.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.Azure.KeyVault" Version="3.0.3" />
+    <PackageReference Include="Microsoft.Azure.Services.AppAuthentication" Version="1.0.3" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.AzureKeyVault" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.PlatformAbstractions" Version="1.1.0" />
+    <PackageReference Include="Microsoft.ServiceFabric.AspNetCore.Kestrel" Version="3.2.162" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="4.0.1" />
+  </ItemGroup>
+
+</Project>
