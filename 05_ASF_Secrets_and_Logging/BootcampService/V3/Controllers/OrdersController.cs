@@ -5,6 +5,10 @@
     using System;
     using System.Collections.Generic;
 
+    using Microsoft.ApplicationInsights;
+    using Microsoft.ApplicationInsights.Extensibility;
+    using Microsoft.Extensions.Configuration;
+
     /// <summary>
     /// Represents a RESTful service of orders.
     /// </summary>
@@ -13,6 +17,15 @@
     [Route( "api/[controller]" )]
     public class OrdersController : ControllerBase
     {
+        private readonly IConfiguration config;
+
+        private TelemetryClient telemetry = new TelemetryClient(TelemetryConfiguration.Active);
+
+        public OrdersController(IConfiguration config)
+        {
+            this.config = config;
+        }
+
         /// <summary>
         /// Retrieves all orders.
         /// </summary>
@@ -42,13 +55,20 @@
         /// <returns>The requested order.</returns>
         /// <response code="200">The order was successfully retrieved.</response>
         /// <response code="404">The order does not exist.</response>
-        [HttpGet( "{id:int}" )]
-        [Produces( "application/json" )]
-        [ProducesResponseType( typeof( Order ), 200 )]
-        [ProducesResponseType( 400 )]
-        [ProducesResponseType( 404 )]
-        public IActionResult Get( int id ) => Ok( new Order() { Id = id, Customer = "John Doe" } );
+        [HttpGet("{id:int}")]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(Order), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        public IActionResult Get(int id)
+        {
+            telemetry.TrackEvent($"Someone fetched Order with API {id}");
 
+            var secret = this.config != null ? this.config["FancySecret"] ?? $"Not found" : "Fancy secret not found";
+
+            return this.Ok(new Order() { Id = id, Customer = secret });
+        }
+       
         /// <summary>
         /// Places a new order.
         /// </summary>

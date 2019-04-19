@@ -105,6 +105,7 @@
                     // integrate xml comments
                     options.IncludeXmlComments(XmlCommentsFilePath);
                 });
+            services.AddSingleton<IConfiguration>(Configuration);
         }
 
         /// <summary>
