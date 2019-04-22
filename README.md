@@ -1,5 +1,17 @@
-# bootcamp-v1
-Initial version of ASF bootcamp application
+# Global Azure Bootcamp 2019 workshop. 𝐅𝐫𝐨𝐦 𝐖𝐞𝐛 𝐀𝐏𝐈 𝐭𝐨 𝐀𝐳𝐮𝐫𝐞 𝐒𝐞𝐫𝐯𝐢𝐜𝐞 𝐅𝐚𝐛𝐫𝐢𝐜 𝐬𝐞𝐫𝐯𝐢𝐜𝐞 𝐢𝐧 𝟏𝟐𝟎 𝐦𝐢𝐧𝐮𝐭𝐞𝐬.
+# Stanislav Lebedenko
+-------------------------------------------
+So we all want to work with the fancy and newest tech, but sometimes we are stuck with a legacy project and it seems that there is no way out. But there is hope, you can try to start small, with time you have at the moment and migrate it to reliable and scalable microservices. This way you will create a bridgehead for further project expansion.
+
+My intention is to give you a taste of Azure Service Fabric with pragmatic and easy jumpstart steps so you will be ready to migrate your project and survive this process afterwards :).
+Welcome, it will be easy and fun, also you will get a checklist for the real-life migration.
+
+-------------------------------------------
+Web API example is Microsoft API versioning with Swagger
+Source repository:  https://github.com/Microsoft/aspnet-api-versioning/tree/master/samples/aspnetcore/SwaggerSample
+
+Service Fabric project from Visual studio template in Cloud section
+Please choose Visual C# => Cloud => Service Fabric Application => Stateless ASP.NET Core without authentication 
 
 Steps to work with application.
 
