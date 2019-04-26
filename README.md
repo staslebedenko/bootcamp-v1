@@ -277,33 +277,33 @@ Configuration phase
 	  .\CertSetup.ps1 -Install -CertSubjectName CN=localhost
 
 25. Crucial point, Export generated in 23 cert with password and install self signed certificate to you VMSS instances. Wait for installation finis
-	Connect-AzureRmAccount
+		Connect-AzureRmAccount
 
-	$vaultname="yourFancyVault"
-	$certname="SomeCertName"
-	$certpw="SuperPassword"
-	$groupname="your-fabric-group"
-	$clustername = "your-cluster-name"
-	$ExistingPfxFilePath="C:\certificates\SomeCertName.pfx"
-	
-	$appcertpwd = ConvertTo-SecureString -String $certpw -AsPlainText -Force
-	
-	Write-Host "Reading pfx file from $ExistingPfxFilePath"
-	$cert = new-object System.Security.Cryptography.X509Certificates.X509Certificate2 $ExistingPfxFilePath, $certpw
+		$vaultname="yourFancyVault"
+		$certname="SomeCertName"
+		$certpw="SuperPassword"
+		$groupname="your-fabric-group"
+		$clustername = "your-cluster-name"
+		$ExistingPfxFilePath="C:\certificates\SomeCertName.pfx"
 
-	$bytes = [System.IO.File]::ReadAllBytes($ExistingPfxFilePath)
-	$base64 = [System.Convert]::ToBase64String($bytes)
+		$appcertpwd = ConvertTo-SecureString -String $certpw -AsPlainText -Force
 
-	$jsonBlob = @{
-	   data = $base64
-	   dataType = 'pfx'
-	   password = $certpw
-	   } | ConvertTo-Json
+		Write-Host "Reading pfx file from $ExistingPfxFilePath"
+		$cert = new-object System.Security.Cryptography.X509Certificates.X509Certificate2 $ExistingPfxFilePath, $certpw
 
-	$contentbytes = [System.Text.Encoding]::UTF8.GetBytes($jsonBlob)
-	$content = [System.Convert]::ToBase64String($contentbytes)
+		$bytes = [System.IO.File]::ReadAllBytes($ExistingPfxFilePath)
+		$base64 = [System.Convert]::ToBase64String($bytes)
 
-	$secretValue = ConvertTo-SecureString -String $content -AsPlainText -Force
+		$jsonBlob = @{
+		   data = $base64
+		   dataType = 'pfx'
+		   password = $certpw
+		   } | ConvertTo-Json
+
+		$contentbytes = [System.Text.Encoding]::UTF8.GetBytes($jsonBlob)
+		$content = [System.Convert]::ToBase64String($contentbytes)
+
+		$secretValue = ConvertTo-SecureString -String $content -AsPlainText -Force
 
 # Upload the certificate to the key vault as a secret
 Write-Host "Writing secret to $certname in vault $vaultname"
