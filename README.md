@@ -10,6 +10,8 @@ Welcome, it will be easy and fun, also you will get a checklist for the real-lif
 Web API example is Microsoft API versioning with Swagger
 Source repository:  https://github.com/Microsoft/aspnet-api-versioning/tree/master/samples/aspnetcore/SwaggerSample
 
+-------------------------------------------
+
 Service Fabric project from Visual studio template in Cloud section
 Please choose Visual C# => Cloud => Service Fabric Application => Stateless ASP.NET Core without authentication 
 
@@ -273,7 +275,42 @@ Configuration phase
 23. Generate self signed certificate
 	  cd './program files/microsoft sdks/service fabric/clustersetup/secure'
 	  .\CertSetup.ps1 -Install -CertSubjectName CN=localhost
+
+25. Crucial point, Export generated in 23 cert with password and install self signed certificate to you VMSS instances. Wait for installation finis
+	Connect-AzureRmAccount
+
+	$vaultname="yourFancyVault"
+	$certname="SomeCertName"
+	$certpw="SuperPassword"
+	$groupname="your-fabric-group"
+	$clustername = "your-cluster-name"
+	$ExistingPfxFilePath="C:\certificates\SomeCertName.pfx"
 	
+	$appcertpwd = ConvertTo-SecureString -String $certpw -AsPlainText -Force
+	
+	Write-Host "Reading pfx file from $ExistingPfxFilePath"
+	$cert = new-object System.Security.Cryptography.X509Certificates.X509Certificate2 $ExistingPfxFilePath, $certpw
+
+	$bytes = [System.IO.File]::ReadAllBytes($ExistingPfxFilePath)
+	$base64 = [System.Convert]::ToBase64String($bytes)
+
+	$jsonBlob = @{
+	   data = $base64
+	   dataType = 'pfx'
+	   password = $certpw
+	   } | ConvertTo-Json
+
+	$contentbytes = [System.Text.Encoding]::UTF8.GetBytes($jsonBlob)
+	$content = [System.Convert]::ToBase64String($contentbytes)
+
+	$secretValue = ConvertTo-SecureString -String $content -AsPlainText -Force
+
+# Upload the certificate to the key vault as a secret
+Write-Host "Writing secret to $certname in vault $vaultname"
+$secret = Set-AzureKeyVaultSecret -VaultName $vaultname -Name $certname -SecretValue $secretValue
+
+# Add a certificate to all the VMs in the cluster.
+Add-AzureRmServiceFabricApplicationCertificate -ResourceGroupName $groupname -Name $clustername -SecretIdentifier $secret.Id -Verbose
 24. Add two files from Repo.
 	  Setup.bat and SetCertAccess.ps1 and set in options copy if newer for both files.
 	
