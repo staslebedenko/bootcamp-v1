@@ -1,4 +1,5 @@
-# Global Azure Bootcamp 2019 workshop. 𝐅𝐫𝐨𝐦 𝐖𝐞𝐛 𝐀𝐏𝐈 𝐭𝐨 𝐀𝐳𝐮𝐫𝐞 𝐒𝐞𝐫𝐯𝐢𝐜𝐞 𝐅𝐚𝐛𝐫𝐢𝐜 𝐬𝐞𝐫𝐯𝐢𝐜𝐞 𝐢𝐧 𝟏𝟐𝟎 𝐦𝐢𝐧𝐮𝐭𝐞𝐬.
+# Global Azure Bootcamp Lviv 2019 workshop. 𝐅𝐫𝐨𝐦 𝐖𝐞𝐛 𝐀𝐏𝐈 𝐭𝐨 𝐀𝐳𝐮𝐫𝐞 𝐒𝐞𝐫𝐯𝐢𝐜𝐞 𝐅𝐚𝐛𝐫𝐢𝐜 𝐬𝐞𝐫𝐯𝐢𝐜𝐞 𝐢𝐧 𝟏𝟐𝟎 𝐦𝐢𝐧𝐮𝐭𝐞𝐬.
+# You can do this workshop(lab) by yourself, just use detailed steps below and get free Azure account https://azure.microsoft.com/en-us/free/.
 # Stanislav Lebedenko
 -------------------------------------------
 So we all want to work with the fancy and newest tech, but sometimes we are stuck with a legacy project and it seems that there is no way out. But there is hope, you can try to start small, with time you have at the moment and migrate it to reliable and scalable microservices. This way you will create a bridgehead for further project expansion.
